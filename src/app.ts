@@ -47,6 +47,16 @@ app.post('/notes', authenticate, (req: Request, res: Response) => {
   return res.status(201).json(newNote);
 });
 
+// Retrieve a single note by id
+app.get('/notes/:id', authenticate, (req, res) => {
+  const id = parseInt(req.params.id);
+  const note = notes.find(n => n.id === id);
+  if (!note) {
+    return res.status(404).json({ message: 'Note not found' });
+  }
+  res.json(note);
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
