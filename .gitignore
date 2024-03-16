@@ -1,0 +1,25 @@
+# Node.js related
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# IDE files
+.idea/
+*.iml
+
+# Compiled output
+dist/
+build/
+
+# Environment variables
+.env
+
+# Dependency directories
+.pnp/
+.pnp.js
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
