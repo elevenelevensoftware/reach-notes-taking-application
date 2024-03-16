@@ -1,22 +1,12 @@
-// index.ts
-
 import express, { Request, Response } from 'express';
 import bodyParser from 'body-parser';
-import { v4 as uuidv4 } from 'uuid';
-
-interface Note {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: Date;
-}
 
 const app = express();
 const PORT = 3000;
 
 const authToken = 'my_secret_token';
 
-let notes: Note[] = [];
+let notes: { id: number; title: string; content: string; createdAt: Date }[] = [];
 
 app.use(bodyParser.json());
 
@@ -37,6 +27,24 @@ app.get('/notes', authenticate, (req: Request, res: Response) => {
     createdAt: note.createdAt,
   }));
   return res.json(simplifiedNotes);
+});
+
+app.post('/notes', authenticate, (req: Request, res: Response) => {
+  const { title, content } = req.body;
+
+  if (!title || !content) {
+    return res.status(400).json({ message: 'Title and content are required' });
+  }
+
+  const newNote = {
+    id: notes.length + 1,
+    title,
+    content,
+    createdAt: new Date()
+  };
+
+  notes.push(newNote);
+  return res.status(201).json(newNote);
 });
 
 app.listen(PORT, () => {
