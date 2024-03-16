@@ -4,8 +4,9 @@ import bodyParser from 'body-parser';
 const app = express();
 const PORT = 3000;
 
-const authToken = 'my_secret_token';
+const authToken = 'an_arbitrary_static_token';
 
+// this could be better as it could be a standalone model
 let notes: { id: number; title: string; content: string; createdAt: Date }[] = [];
 
 app.use(bodyParser.json());
@@ -19,7 +20,7 @@ const authenticate = (req: Request, res: Response, next: Function) => {
   next();
 };
 
-// Retrieve all notes (showing only titles and creation dates)
+// Retrieve all notes
 app.get('/notes', authenticate, (req: Request, res: Response) => {
   const simplifiedNotes = notes.map(note => ({
     id: note.id,
@@ -29,11 +30,16 @@ app.get('/notes', authenticate, (req: Request, res: Response) => {
   return res.json(simplifiedNotes);
 });
 
+export const getNotes = (req: Request, res: Response): void => {
+  const simplifiedNotes = notes.map(note => ({ id: note.id, title: note.title, createdAt: note.createdAt }));
+  res.json(simplifiedNotes);
+};
+
 app.post('/notes', authenticate, (req: Request, res: Response) => {
   const { title, content } = req.body;
 
   if (!title || !content) {
-    return res.status(400).json({ message: 'Title and content are required' });
+    return res.status(400).json({ message: 'Please supply a title and some content' });
   }
 
   const newNote = {
